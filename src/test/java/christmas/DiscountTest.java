@@ -1,9 +1,10 @@
 package christmas;
 
-import static jdk.internal.org.jline.reader.impl.LineReaderImpl.CompletionType.List;
 
 import christmas.discount.DDayDiscount;
 import christmas.discount.WeekDiscount;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class DDayDiscountTest {
+class DiscountTest {
 
     @DisplayName("D-day이벤트 할인 금액 계산함수 성공 테스트")
     @ParameterizedTest
@@ -22,7 +23,7 @@ class DDayDiscountTest {
     //when
         Money actual = discount.calculateDiscountAmount(reserveDate);
         //then
-        Assertions.assertThat(actual.getAmount()).isEqualTo(expected.getAmount());
+        Assertions.assertThat(actual).isEqualTo(expected);
     }
 
     static Stream<Arguments> dDayDiscountProvider() {
@@ -46,20 +47,27 @@ class DDayDiscountTest {
     @DisplayName("주말이벤트 할인 금액 계산함수 성공 테스트")
     @ParameterizedTest
     @MethodSource("weekDiscountProvider")
-    void weekDiscountAmount(DecemberDate reserveDate, Money expected) {
+    void weekDiscountAmount(DecemberDate decemberDate, Money expected) {
         //given
         WeekDiscount discount = new WeekDiscount();
+
+        Map<Menu, Integer> menuRepository = new HashMap<>();
+        menuRepository.put(Menu.T_BORN_STAKE, 1);
+        menuRepository.put(Menu.BBQ_RIBS, 1);
+        menuRepository.put(Menu.MUSHROOM_CREAM_SOUP, 1);
         //when
-        Money actual = discount.calculateDiscountAmount(reserveDate);
+        Menus menus = new Menus(menuRepository);
+        Money actual = discount.calculateDiscountAmount(decemberDate, menus);
         //then
-        Assertions.assertThat(actual.getAmount()).isEqualTo(expected.getAmount());
+        Assertions.assertThat(actual).isEqualTo(expected);
     }
 
     static Stream<Arguments> weekDiscountProvider() {
         return  Stream.of(
-                Arguments.of(Menus, new Money(2023)),
-                Arguments.of(new Menus(List.of(Menu.CHOCO_CAKE, )), new Money(2023))
-
+                Arguments.of(new DecemberDate(1), new Money(2023 * 2)),
+                Arguments.of(new DecemberDate(2), new Money(2023 * 2)),
+                Arguments.of(new DecemberDate(3), new Money(0)),
+                Arguments.of(new DecemberDate(4), new Money(0))
         );
     }
 }
