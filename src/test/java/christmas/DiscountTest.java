@@ -1,6 +1,8 @@
 package christmas;
 
 
+import static org.assertj.core.api.Assertions.*;
+
 import christmas.discount.DDayDiscount;
 import christmas.discount.WeekDiscount;
 import java.util.HashMap;
@@ -26,7 +28,7 @@ class DiscountTest {
     //when
         Money actual = discount.calculateDiscountAmount(reserveDate);
         //then
-        Assertions.assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
     static Stream<Arguments> dDayDiscountProvider() {
@@ -49,23 +51,45 @@ class DiscountTest {
 
     @DisplayName("주말이벤트 할인 금액 계산함수 성공 테스트")
     @ParameterizedTest
-    @MethodSource("weekDiscountProvider")
-    void weekDiscountAmount(Menus menus, DecemberDate decemberDate, Money expected) {
+    @MethodSource("weekendDiscountProvider")
+    void weekendDiscountAmount(Menus menus, DecemberDate decemberDate, Money expected) {
         //given
         WeekDiscount discount = new WeekDiscount();
         //when
         Money actual = discount.calculateDiscountAmount(decemberDate, menus);
         //then
-        Assertions.assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
-    static Stream<Arguments> weekDiscountProvider() {
+    static Stream<Arguments> weekendDiscountProvider() {
         return  Stream.of(
                 Arguments.of(makeMenusByList(List.of(Menu.CHAMPAGNE, Menu.BBQ_RIBS, Menu.T_BORN_STAKE)), WEEKEND,
                         new Money(2023 * 2)),
                 Arguments.of(makeMenusByList(List.of(Menu.CHAMPAGNE, Menu.BBQ_RIBS, Menu.T_BORN_STAKE)), WEEKDAY,
                         new Money(0))
         );
+    }
+
+    @DisplayName("평일는 디저트 1개당 2023원 할인 적용된다")
+    @ParameterizedTest
+    @MethodSource("weekdayDiscountProvider")
+    void weekdayDiscountAmountTest(Menus menus, DecemberDate date, Money expected) {
+        //given
+        WeekDiscount weekDiscount = new WeekDiscount();
+        //when
+        Money actual = weekDiscount.calculateDiscountAmount(date, menus);
+        //then
+        assertThat(actual).isEqualTo(expected);
+
+    }
+
+    static Stream<Arguments> weekdayDiscountProvider() {
+        return Stream.of(
+                Arguments.of(makeMenusByList(List.of(Menu.CHAMPAGNE, Menu.BBQ_RIBS, Menu.T_BORN_STAKE)),
+                                WEEKEND, new Money(0)),
+                Arguments.of(makeMenusByList(List.of(Menu.CHAMPAGNE, Menu.BBQ_RIBS, Menu.T_BORN_STAKE)),
+                        WEEKDAY, new Money(2023 * 2))
+                );
     }
 
     private static Menus makeMenusByList(List<Menu> menus) {
