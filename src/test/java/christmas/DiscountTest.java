@@ -33,9 +33,8 @@ class DiscountTest {
     @MethodSource("dDayDiscountProvider")
     void dDayDiscountAmount(DecemberDate reserveDate, Money expected) {
     //given
-        DDayDiscount discount = new DDayDiscount();
     //when
-        Money actual = discount.calculateDiscountAmount(reserveDate);
+        Money actual = DDayDiscount.calculateDiscountAmount(reserveDate);
         //then
         assertThat(actual).isEqualTo(expected);
     }
@@ -63,9 +62,8 @@ class DiscountTest {
     @MethodSource("weekendDiscountProvider")
     void weekendDiscountAmount(Menus menus, DecemberDate decemberDate, Money expected) {
         //given
-        WeekDiscount discount = new WeekDiscount();
         //when
-        Money actual = discount.calculateDiscountAmount(decemberDate, menus);
+        Money actual = WeekDiscount.calculateDiscountAmount(decemberDate, menus);
         //then
         assertThat(actual).isEqualTo(expected);
     }
@@ -84,9 +82,8 @@ class DiscountTest {
     @MethodSource("weekdayDiscountProvider")
     void weekdayDiscountAmountTest(Menus menus, DecemberDate date, Money expected) {
         //given
-        WeekDiscount weekDiscount = new WeekDiscount();
         //when
-        Money actual = weekDiscount.calculateDiscountAmount(date, menus);
+        Money actual = WeekDiscount.calculateDiscountAmount(date, menus);
         //then
         assertThat(actual).isEqualTo(expected);
 
@@ -106,9 +103,8 @@ class DiscountTest {
     @MethodSource("specialDiscountProvider")
     void specialDiscountTest(DecemberDate date, Money expected){
         //given
-        SpecialDiscount specialDiscount = new SpecialDiscount();
         //when
-        Money actual = specialDiscount.calculateDiscountAmount(date);
+        Money actual = SpecialDiscount.calculateDiscountAmount(date);
         //then
         assertThat(actual).isEqualTo(expected);
     }
