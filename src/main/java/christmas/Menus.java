@@ -9,7 +9,7 @@ public class Menus {
         this.menuRepository = menuRepository;
     }
 
-    public int getCountByFoodType(FoodType foodType) {
+    public int findTotalCountbyFoodType(FoodType foodType) {
         return menuRepository.keySet()
                 .stream()
                 .filter(menu -> menu.isSameType(foodType))
