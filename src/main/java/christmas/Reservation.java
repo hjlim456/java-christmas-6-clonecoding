@@ -20,16 +20,16 @@ public class Reservation {
         return menus.calculateTotalPrice();
     }
 
-    public Money calculateTotalDiscountMoney(DecemberDate date, Menus menus) {
+    public Money calculateTotalDiscountMoney() {
         Money OrderMoney = calculateOrderSum();
         if (OrderMoney.isLessThan(new Money(10000))) {
             return new Money(0);
         }
 
         List<Money> totalDicountMoney = new ArrayList<>(List.of(
-                DDayDiscount.calculateDiscountAmount(date),
-                SpecialDiscount.calculateDiscountAmount(date),
-                WeekDiscount.calculateDiscountAmount(date, menus)
+                DDayDiscount.calculateDiscountAmount(decemberDate),
+                SpecialDiscount.calculateDiscountAmount(decemberDate),
+                WeekDiscount.calculateDiscountAmount(decemberDate, menus)
         ));
         isAppliedGiftEvent(totalDicountMoney);
 
@@ -44,8 +44,7 @@ public class Reservation {
         }
     }
 
-    public Money calculateTotalDiscountPrice() {
-        return null;
+    public Money calculateTotalDiscountedMoney() {
+        return calculateOrderSum().minus(calculateTotalDiscountMoney());
     }
-
 }

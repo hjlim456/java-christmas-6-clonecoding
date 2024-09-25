@@ -38,4 +38,8 @@ public record Money(int amount) {
     public boolean isLessThan(Money money) {
         return amount < money.amount;
     }
+
+    public Money minus(Money money) {
+        return new Money(amount - money.amount);
+    }
 }
