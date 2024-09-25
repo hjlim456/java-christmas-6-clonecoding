@@ -34,4 +34,8 @@ public record Money(int amount) {
     public boolean isMoreOrEqualThan(Money source) {
         return amount > source.amount;
     }
+
+    public boolean isLessThan(Money money) {
+        return amount < money.amount;
+    }
 }

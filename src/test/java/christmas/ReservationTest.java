@@ -1,5 +1,6 @@
 package christmas;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
@@ -28,6 +29,25 @@ class ReservationTest {
 
         Money discountMoney = reservation.calculateTotalDiscountMoney(date, menus);
         //then
-        Assertions.assertThat(discountMoney).isEqualTo(expected);
+        assertThat(discountMoney).isEqualTo(expected);
+    }
+
+    @DisplayName("구입 금액이 1만원미만일시 할인금액 0")
+    @Test
+    void lessThanMinPriceTest() {
+
+        //given
+        Map<Menu, Integer> menuIntegerMap = new HashMap<>();
+        Menus menus = new Menus(menuIntegerMap);
+
+        DecemberDate date = new DecemberDate(3);
+        Reservation reservation = new Reservation(menus, date);
+
+        Money actual = reservation.calculateTotalDiscountMoney(date, menus);
+        //when
+        menuIntegerMap.put(Menu.ICE_CREAM, 1);
+        Money expected = new Money(0);
+        //then
+        assertThat(actual).isEqualTo(expected);
     }
 }

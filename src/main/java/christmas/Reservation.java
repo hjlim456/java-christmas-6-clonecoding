@@ -16,11 +16,16 @@ public class Reservation {
         this.decemberDate = decemberDate;
     }
 
-    public Money calculateTotalMoney() {
+    public Money calculateOrderSum() {
         return menus.calculateTotalPrice();
     }
 
     public Money calculateTotalDiscountMoney(DecemberDate date, Menus menus) {
+        Money OrderMoney = calculateOrderSum();
+        if (OrderMoney.isLessThan(new Money(10000))) {
+            return new Money(0);
+        }
+
         List<Money> totalDicountMoney = new ArrayList<>(List.of(
                 DDayDiscount.calculateDiscountAmount(date),
                 SpecialDiscount.calculateDiscountAmount(date),
@@ -33,7 +38,7 @@ public class Reservation {
     }
 
     private void isAppliedGiftEvent(List<Money> totalDicountMoney) {
-        Money totalMoney = calculateTotalMoney();
+        Money totalMoney = calculateOrderSum();
         if (totalMoney.isMoreOrEqualThan(APPLY_PRESENT_THRESHOLDER)){
             totalDicountMoney.add(Menu.CHAMPAGNE.getPrice());
         }
