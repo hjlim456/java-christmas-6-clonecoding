@@ -4,6 +4,7 @@ package christmas;
 import christmas.discount.DDayDiscount;
 import christmas.discount.WeekDiscount;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.assertj.core.api.Assertions;
@@ -13,7 +14,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class DiscountTest {
-
+    //Fixture 도임
+    private static final DecemberDate WEEKEND = new DecemberDate(1);
+    private static final DecemberDate WEEKDAY = new DecemberDate(   3);
     @DisplayName("D-day이벤트 할인 금액 계산함수 성공 테스트")
     @ParameterizedTest
     @MethodSource("dDayDiscountProvider")
@@ -47,16 +50,10 @@ class DiscountTest {
     @DisplayName("주말이벤트 할인 금액 계산함수 성공 테스트")
     @ParameterizedTest
     @MethodSource("weekDiscountProvider")
-    void weekDiscountAmount(DecemberDate decemberDate, Money expected) {
+    void weekDiscountAmount(Menus menus, DecemberDate decemberDate, Money expected) {
         //given
         WeekDiscount discount = new WeekDiscount();
-
-        Map<Menu, Integer> menuRepository = new HashMap<>();
-        menuRepository.put(Menu.T_BORN_STAKE, 1);
-        menuRepository.put(Menu.BBQ_RIBS, 1);
-        menuRepository.put(Menu.MUSHROOM_CREAM_SOUP, 1);
         //when
-        Menus menus = new Menus(menuRepository);
         Money actual = discount.calculateDiscountAmount(decemberDate, menus);
         //then
         Assertions.assertThat(actual).isEqualTo(expected);
@@ -64,10 +61,18 @@ class DiscountTest {
 
     static Stream<Arguments> weekDiscountProvider() {
         return  Stream.of(
-                Arguments.of(new DecemberDate(1), new Money(2023 * 2)),
-                Arguments.of(new DecemberDate(2), new Money(2023 * 2)),
-                Arguments.of(new DecemberDate(3), new Money(0)),
-                Arguments.of(new DecemberDate(4), new Money(0))
+                Arguments.of(makeMenusByList(List.of(Menu.CHAMPAGNE, Menu.BBQ_RIBS, Menu.T_BORN_STAKE)), WEEKEND,
+                        new Money(2023 * 2)),
+                Arguments.of(makeMenusByList(List.of(Menu.CHAMPAGNE, Menu.BBQ_RIBS, Menu.T_BORN_STAKE)), WEEKDAY,
+                        new Money(0))
         );
+    }
+
+    private static Menus makeMenusByList(List<Menu> menus) {
+        Map<Menu, Integer> menuRepository = new HashMap<>();
+        menus.forEach(menu -> {
+            menuRepository.put(menu, menuRepository.getOrDefault(menu, 0) + 1);
+        });
+        return new Menus(menuRepository);
     }
 }
