@@ -30,4 +30,8 @@ public record Money(int amount) {
     public int hashCode() {
         return Objects.hash(amount);
     }
+
+    public boolean isMoreOrEqualThan(Money source) {
+        return amount > source.amount;
+    }
 }
